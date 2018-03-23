@@ -17,7 +17,11 @@ public class MainActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ArrayAdapter adapter = new ArrayAdapter<>(this, R.layout.list_item, R.id.tv_item, data);
+        ArrayAdapter adapter = new ArrayAdapter<>(this,
+                //android.R.layout.simple_list_item_1
+                R.layout.list_item,
+                R.id.tv_item,
+                data);
         setListAdapter(adapter);
     }
 
