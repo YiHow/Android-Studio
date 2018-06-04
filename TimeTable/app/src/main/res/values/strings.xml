@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">課表</string>
+    <string name="w1">一</string>
+    <string name="w2">二</string>
+    <string name="w3">三</string>
+    <string name="w4">四</string>
+    <string name="w5">五</string>
+    <string name="w6">六</string>
+    <string name="w7">日</string>
+    <string name="action_setting">改變顏色</string>
+    <string name="action_new">新增</string>
+    <string name="action_quit">結束程式</string>
+    <string name="title">新增課程</string>
+    <string name="courseName">課堂名稱</string>
+    <string name="courseRoom">教室位置</string>
+    <string name="courseTeacher">老師名稱</string>
+    <string name="courseWeek">星期</string>
+    <string name="courseStart">開始節數</string>
+    <string name="courseNum">總共幾節</string>
+</resources>
