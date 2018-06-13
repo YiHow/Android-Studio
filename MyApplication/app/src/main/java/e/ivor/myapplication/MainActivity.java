@@ -1,8 +1,11 @@
 package e.ivor.myapplication;
 
 import android.app.Dialog;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,24 +20,28 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.sql.SQLData;
+import java.sql.SQLException;
+import java.sql.SQLInput;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+    public TimeTableDB DH = null;
     LinearLayout week[] = new LinearLayout[5];
     List courseData[] = new List[5];
-    int itemHeight;
-    int marTop,marLeft;
-    int[] colorArray = {0xff0099cc, 0xff669900, 0xffff8800, 0xffcc0000};//藍 綠 橘 紅
-    int colorIndex = 0;
-    int[] colorArray2 = {0xff00ddff, 0xff99cc00, 0xffffbb33, 0xffff4444};
+    int itemHeight, marTop, marLeft, inputWeek;
     final int DIALOG_ID = 1;
+    int[] colorArray = {0xff0099cc, 0xff669900, 0xffff8800, 0xffcc0000};//藍 綠 橘 紅
+    int[] colorArray2 = {0xff00ddff, 0xff99cc00, 0xffffbb33, 0xffff4444};
+    int colorIndex = 0;
     Course newC;
-    int inputWeek;
     List<Course> list1 = new ArrayList<>();
     List<Course> list2 = new ArrayList<>();
     List<Course> list3 = new ArrayList<>();
@@ -45,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        DH = new TimeTableDB(this);
 
         itemHeight = getResources().getDimensionPixelSize(R.dimen.weekItemHeight);
         marTop = getResources().getDimensionPixelSize(R.dimen.weekItemMarTop);
@@ -58,12 +66,43 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void add(Course c, int week) {
+        SQLiteDatabase db = DH.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put("Weeks", week);
+        values.put("Name", c.getName());
+        values.put("Room", c.getClassRoom());
+        values.put("Teacher", c.getTeacher());
+        values.put("Start", c.getStart());
+        values.put("Nums", c.getNums());
+        db.insert("TIMETABLE", null, values);
+    }
+    private void getDB() {
+        SQLiteDatabase db = DH.getReadableDatabase();
+        //ContentValues values = new ContentValues();
+
+        Cursor cursor = db.query("TIMETABLE", new String []{"_id", "Weeks", "Name", "Room", "Teacher", "Start", "Nums"}, null, null, null, null, null);
+        cursor.moveToFirst();
+        for (int i = 0; i < cursor.getCount(); i++) {
+            //add data
+            cursor.getString(1); // weeks
+            cursor.getString(2); // Name
+            cursor.getString(3); // Room
+            cursor.getString(4); // Teacher
+            cursor.getString(5); // Start
+            cursor.getString(6); // Nums
+            cursor.moveToNext();
+        }
+    }
+
     public void getCourceData() {
 
         list1.add(new Course("日文(二)","資電107", "陳俊廷", 3, 2));
         list1.add(new Course("行動應用程式開發","資電B19", "薛念林", 8, 1));
         list1.add(new Course("班級活動","資電B03", "陳錫民", 6, 2));
         list1.add(new Course("電子商務安全","資電404", "王銘宏", 11, 3));
+        add(new Course("日文(二)","資電107", "陳俊廷", 3, 2), 1);
         courseData[0] = list1;
 
         list2.add(new Course("機率論","資電404", "游景盛", 1, 2));
@@ -89,7 +128,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void initWeek(LinearLayout lL, List<Course>data){
-
         if (lL == null || data == null || data.size() < 1) return;
         Course pre = data.get(0);
         for (int i = 0; i < data.size(); i++) {
@@ -97,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
             TextView tv = new TextView(this);
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.FILL_PARENT ,
-                    itemHeight*c.getNums()+marTop*(c.getNums()-1));
+                    itemHeight*(c.getNums())+marTop*(c.getNums()-1));
             if (i > 0){
                 lp.setMargins(marLeft, (c.getStart()-(pre.getStart()+pre.getNums()))*(itemHeight+marTop)+marTop, 0, 0);
             } else {
@@ -136,12 +174,54 @@ public class MainActivity extends AppCompatActivity {
                 list5.add(course);
                 courseData[4] = list5;
                 break;
+            default:
+                Toast.makeText(MainActivity.this, "輸入錯誤", Toast.LENGTH_SHORT).show();
+                return;
         }
-        for (int i = 0; i < week.length; i++) {
-            week[i] = findViewById(R.id.week1+i);
-            initWeek(week[i], courseData[i]);
-        }
+        Toast.makeText(MainActivity.this, "新增課程", Toast.LENGTH_SHORT).show();
+        int i = day-1;
+        week[i] = findViewById(R.id.week1+i);
+        week[i].removeAllViewsInLayout();
+        initWeek(week[i], courseData[i]);
     }
+
+    public boolean checkRepeat(Course c, int week) {
+        List<Course> list;
+        Course tempC;
+        switch (week) {
+            case 1:
+                list = list1;
+                break;
+            case 2:
+                list = list2;
+                break;
+            case 3:
+                list = list3;
+                break;
+            case 4:
+                list = list4;
+                break;
+            case 5:
+                list = list5;
+                break;
+            default:
+                return false;
+        }
+        for(int i = 0 ; i < list.size(); i++) {
+            tempC = list.get(i);
+            for(int j = c.getStart(); j < c.getStart()+c.getNums(); j++) {
+                for(int k = tempC.getStart(); k < tempC.getStart()+c.getNums(); k++){
+                    if(j == k){
+                        Toast.makeText(this, "課程重複", Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+                }
+            }
+        }
+        Toast.makeText(this, "新增成功", Toast.LENGTH_SHORT).show();
+        return true;
+    }
+
     @Override
     protected Dialog onCreateDialog(int id)  //初始化對話方塊，透過 showDialog(ID) 觸發
     {
@@ -181,7 +261,7 @@ public class MainActivity extends AppCompatActivity {
                                     int start = Integer.parseInt(et4.getText().toString());
                                     int num = Integer.parseInt(et5.getText().toString());
                                     int week = Integer.parseInt(et6.getText().toString());
-                                    if (start > 13 || start <= 0 || num > 3 || num <= 0 || week < 1 || week > 5){
+                                    if (start > 14 || start <= 0 || num > 3 || num <= 0 || week < 1 || week > 5){
                                         Toast.makeText(MainActivity.this, "輸入錯誤!", Toast.LENGTH_SHORT).show();
                                     } else {
                                         et.setText("");
@@ -192,6 +272,8 @@ public class MainActivity extends AppCompatActivity {
                                         et6.setText("");
                                         newC = new Course(name, room, teacher, start, num);
                                         inputWeek = week;
+                                        if(checkRepeat(newC, inputWeek))
+                                            addNewCourse(newC, inputWeek);
                                     }
                                 }
                             }
@@ -251,6 +333,8 @@ public class MainActivity extends AppCompatActivity {
         changeColor(tv, color);
         tv = findViewById(R.id.num_13);
         changeColor(tv, color);
+        tv = findViewById(R.id.num_14);
+        changeColor(tv, color);
     }
 
 
@@ -270,7 +354,6 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.action_new:
                 showDialog(DIALOG_ID);
-                addNewCourse(newC, inputWeek);
                 break;
             case R.id.action_quit:
                 finish();

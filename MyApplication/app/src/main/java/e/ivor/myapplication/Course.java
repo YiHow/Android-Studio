@@ -1,11 +1,14 @@
 package e.ivor.myapplication;
 
 
+import java.util.ArrayList;
+
 public class Course {
     //課程名稱, 教室, 老師
     private String name;
     private String classRoom;
     private String teacher;
+    private ArrayList<String> content;
     //第幾堂開始上, 總共上幾堂
     int start;
     int nums;
@@ -30,16 +33,8 @@ public class Course {
         return classRoom;
     }
 
-    public void setClassRoom(String classRoom) {
-        this.classRoom = classRoom;
-    }
-
     public String getTeacher() {
         return teacher;
-    }
-
-    public void setTeacher(String teacher) {
-        this.teacher = teacher;
     }
 
     public int getStart() {
@@ -54,8 +49,21 @@ public class Course {
         return nums;
     }
 
-    public void setNums(int nums) {
-        this.nums = nums;
+    public void addContent(String s) {
+        this.content.add(s);
+    }
+
+    public void delContent(String s) {
+        for(int i = 0; i < content.size(); i++) {
+            if(s.equals(content.indexOf(i))) {
+                content.remove(i);
+                return;
+            }
+        }
+    }
+
+    public ArrayList<String> getContent() {
+        return content;
     }
 
 }

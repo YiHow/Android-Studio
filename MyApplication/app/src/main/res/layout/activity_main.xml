@@ -235,6 +235,16 @@
                     android:background="@color/classIndex"
                     android:gravity="center_horizontal|center_vertical"
                     android:text="13" />
+                <TextView
+                    android:id="@+id/num_14"
+                    android:layout_width="fill_parent"
+                    android:layout_height="@dimen/weekItemHeight"
+                    android:layout_marginLeft="@dimen/weekItemMarLeft"
+                    android:layout_marginTop="@dimen/weekItemMarTop"
+                    android:textColor="@color/textColor"
+                    android:background="@color/classIndex"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:text="14" />
             </LinearLayout>
             <!--monday to sunday-->
             <LinearLayout
