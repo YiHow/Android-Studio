@@ -81,29 +81,36 @@ public class MainActivity extends AppCompatActivity {
     private void getDB() {
         SQLiteDatabase db = DH.getReadableDatabase();
         //ContentValues values = new ContentValues();
-
+        int w;
         Cursor cursor = db.query("TIMETABLE", new String []{"_id", "Weeks", "Name", "Room", "Teacher", "Start", "Nums"}, null, null, null, null, null);
         cursor.moveToFirst();
         for (int i = 0; i < cursor.getCount(); i++) {
             //add data
-            cursor.getString(1); // weeks
-            cursor.getString(2); // Name
-            cursor.getString(3); // Room
-            cursor.getString(4); // Teacher
-            cursor.getString(5); // Start
-            cursor.getString(6); // Nums
+
+            int week = Integer.parseInt(cursor.getString(1)); // weeks
+
+            String name = cursor.getString(2); // Name
+            String room = cursor.getString(3); // Room
+            String teacher = cursor.getString(4); // Teacher
+            int start = Integer.parseInt(cursor.getString(5)); // Start
+            int num = Integer.parseInt(cursor.getString(6)); // Nums
+            Course c = new Course(name, room, teacher, start, num);
+            addNewCourse(c, week);
             cursor.moveToNext();
         }
     }
 
     public void getCourceData() {
 
-        list1.add(new Course("日文(二)","資電107", "陳俊廷", 3, 2));
-        list1.add(new Course("行動應用程式開發","資電B19", "薛念林", 8, 1));
-        list1.add(new Course("班級活動","資電B03", "陳錫民", 6, 2));
-        list1.add(new Course("電子商務安全","資電404", "王銘宏", 11, 3));
+       /* list1.add(new Course("日文(二)","資電107", "陳俊廷", 3, 2));
+                 list1.add(new Course("行動應用程式開發","資電B19", "薛念林", 8, 1));
+                 list1.add(new Course("班級活動","資電B03", "陳錫民", 6, 2));
+                 list1.add(new Course("電子商務安全","資電404", "王銘宏", 11, 3));*/
         add(new Course("日文(二)","資電107", "陳俊廷", 3, 2), 1);
-        courseData[0] = list1;
+        add(new Course("行動應用程式開發","資電B19", "薛念林", 8, 1), 1);
+        add(new Course("班級活動","資電B03", "陳錫民", 6, 2), 1);
+        add(new Course("電子商務安全","資電404", "王銘宏", 11, 3), 1);
+        //courseData[0] = list1;
 
         list2.add(new Course("機率論","資電404", "游景盛", 1, 2));
         list2.add(new Course("系統程式","忠B01", "黃志銘", 6, 1));
