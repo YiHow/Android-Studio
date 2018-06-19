@@ -27,6 +27,13 @@ public class TimeTableDB extends SQLiteOpenHelper{
         db.execSQL(SQL);
     }
 
+    public void cleanTable(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DROP TABLE IF EXISTS " + TIMETABLE);
+        this.onCreate(db);
+        db.close();
+    }
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         String SQL = "DROP TABLE " + TIMETABLE;

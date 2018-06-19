@@ -9,6 +9,14 @@
         app:showAsAction="never"
         android:title="@string/action_new"/>
     <item
+        android:id="@+id/action_del"
+        app:showAsAction="never"
+        android:title="@string/action_del"/>
+    <item
+        android:id="@+id/action_eqTable"
+        app:showAsAction="never"
+        android:title="@string/action_eqTable"/>
+    <item
         android:id="@+id/action_quit"
         app:showAsAction="never"
         android:title="@string/action_quit"/>

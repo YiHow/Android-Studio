@@ -10,6 +10,8 @@
     <string name="w7">日</string>
     <string name="action_setting">改變顏色</string>
     <string name="action_new">新增</string>
+    <string name="action_del">刪除</string>
+    <string name="action_eqTable">範例課表</string>
     <string name="action_quit">結束程式</string>
     <string name="title">新增課程</string>
     <string name="courseName">課堂名稱</string>
@@ -18,4 +20,5 @@
     <string name="courseWeek">星期</string>
     <string name="courseStart">開始節數</string>
     <string name="courseNum">總共幾節</string>
+    <string name="courseNums">第幾節</string>
 </resources>
